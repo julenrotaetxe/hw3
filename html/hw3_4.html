@@ -1,0 +1,222 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hw3_4</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-06"><meta name="DC.source" content="hw3_4.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Problem 4: Image processing and the "unsharp mask"</a></li><li><a href="#2">Zoom in to see the effect on the edges</a></li><li><a href="#3">Zoom in to check the effect of the time steps</a></li><li><a href="#4">Increasing the time step</a></li></ul></div><h2>Problem 4: Image processing and the "unsharp mask"<a name="1"></a></h2><pre class="codeinput">close <span class="string">all</span>;clear;
+<span class="comment">%img_name = 'testpat_noblur.png';</span>
+img_name = <span class="string">'eye.png'</span>;
+[u, ublur] = blurImg(img_name, 10, 0.1);
+
+uedges = u - ublur;
+usharp = u + uedges;
+
+figure;
+subplot(1,2,1);imagesc(u);title(<span class="string">'Original image'</span>);
+caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
+subplot(1,2,2);imagesc(usharp);title(<span class="string">'Unsharp mask'</span>);
+caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
+</pre><img vspace="5" hspace="5" src="hw3_4_01.png" alt=""> <h2>Zoom in to see the effect on the edges<a name="2"></a></h2><p>As explained in the tutorial provided, bright zones are made brighter whereas dark zones are made darker.</p><pre class="codeinput">close <span class="string">all</span>;clear;
+img_name = <span class="string">'testpat_noblur.png'</span>;
+idx = 20:30;
+
+[u, ublur] = blurImg(img_name, 10, 0.1);
+uedges = u - ublur;
+usharp = u + uedges;
+figure;
+title(<span class="string">'Zoom-in testpat_noblur.png to appreaciate distorsion in the edges'</span>);
+subplot(2,2, 1);imagesc(u(idx, idx));title(<span class="string">'Original image'</span>);
+caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
+subplot(2,2,2);imagesc(usharp(idx, idx));title(<span class="string">'Unsharp mask'</span>);
+caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
+subplot(2,2, 3);imagesc(uedges(idx, idx));title(<span class="string">'Edges'</span>);
+caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
+subplot(2,2, 4);imagesc(ublur(idx, idx));title(<span class="string">'Blurred image'</span>);
+caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
+</pre><img vspace="5" hspace="5" src="hw3_4_02.png" alt=""> <h2>Zoom in to check the effect of the time steps<a name="3"></a></h2><pre class="codeinput">steps = [5, 10 , 20];
+
+figure;
+title(<span class="string">'Effect of different time steps'</span>);
+subplot(4,1, 1);imagesc(u(idx, idx));title(<span class="string">'Original image'</span>);
+caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
+<span class="keyword">for</span> it = 1:length(steps)
+    [u, ublur] = blurImg(img_name, steps(it), 0.1);
+    uedges = u - ublur;
+    usharp = u + uedges;
+
+    subplot(4,2, 3 + 2*(it-1));imagesc(usharp(idx, idx));
+    title(sprintf(<span class="string">'Unsharp mask. %d blurring steps'</span>, steps(it)));
+    caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
+    subplot(4,2, 4 + 2*(it-1));imagesc(ublur(idx, idx));
+    title(sprintf(<span class="string">'Blurred image. %d blurring steps'</span>, steps(it)));
+    caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="hw3_4_03.png" alt=""> <h2>Increasing the time step<a name="4"></a></h2><p>Changing the dt to 0.5 we observe that the values of ublur do not lie within the [0, 1] limit any more. This is due to the conditional stability of the explicit scheme</p><pre class="codeinput">img_name = <span class="string">'testpat_noblur.png'</span>;
+[u, ublur] = blurImg(img_name, 10, 0.5);
+figure;
+subplot(1,2,1);imagesc(u);title(<span class="string">'Original image'</span>);
+caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
+subplot(1,2,2);imagesc(ublur);title(<span class="string">''</span>);
+caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
+</pre><img vspace="5" hspace="5" src="hw3_4_04.png" alt=""> <p>Maximum and minimum values of the original image</p><pre class="codeinput">max(max(u)), min(min(u))
+</pre><pre class="codeoutput">
+ans =
+
+   0.749019607843137
+
+
+ans =
+
+   0.250980392156863
+
+</pre><p>Maximum and minimum values of the original image</p><pre class="codeinput">max(max(ublur)), min(min(ublur))
+</pre><pre class="codeoutput">
+ans =
+
+     2.879130675551471e+03
+
+
+ans =
+
+    -2.849341674325981e+03
+
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Problem 4: Image processing and the "unsharp mask"
+close all;clear;
+%img_name = 'testpat_noblur.png';
+img_name = 'eye.png';
+[u, ublur] = blurImg(img_name, 10, 0.1);
+
+uedges = u - ublur;
+usharp = u + uedges;
+
+figure;
+subplot(1,2,1);imagesc(u);title('Original image');
+caxis([0 1]);colormap(gray);axis equal, axis tight;
+subplot(1,2,2);imagesc(usharp);title('Unsharp mask');
+caxis([0 1]);colormap(gray);axis equal, axis tight;
+
+%% Zoom in to see the effect on the edges
+% As explained in the tutorial provided, bright zones are made brighter
+% whereas dark zones are made darker.
+close all;clear;
+img_name = 'testpat_noblur.png';
+idx = 20:30;
+
+[u, ublur] = blurImg(img_name, 10, 0.1);
+uedges = u - ublur;
+usharp = u + uedges;
+figure;
+title('Zoom-in testpat_noblur.png to appreaciate distorsion in the edges');
+subplot(2,2, 1);imagesc(u(idx, idx));title('Original image');
+caxis([0 1]);colormap(gray);axis equal, axis tight;
+subplot(2,2,2);imagesc(usharp(idx, idx));title('Unsharp mask');
+caxis([0 1]);colormap(gray);axis equal, axis tight;
+subplot(2,2, 3);imagesc(uedges(idx, idx));title('Edges');
+caxis([0 1]);colormap(gray);axis equal, axis tight;
+subplot(2,2, 4);imagesc(ublur(idx, idx));title('Blurred image');
+caxis([0 1]);colormap(gray);axis equal, axis tight;
+
+%% Zoom in to check the effect of the time steps
+
+steps = [5, 10 , 20];
+
+figure;
+title('Effect of different time steps');
+subplot(4,1, 1);imagesc(u(idx, idx));title('Original image');
+caxis([0 1]);colormap(gray);axis equal, axis tight;
+for it = 1:length(steps)
+    [u, ublur] = blurImg(img_name, steps(it), 0.1);
+    uedges = u - ublur;
+    usharp = u + uedges;
+    
+    subplot(4,2, 3 + 2*(it-1));imagesc(usharp(idx, idx));
+    title(sprintf('Unsharp mask. %d blurring steps', steps(it)));
+    caxis([0 1]);colormap(gray);axis equal, axis tight; 
+    subplot(4,2, 4 + 2*(it-1));imagesc(ublur(idx, idx));
+    title(sprintf('Blurred image. %d blurring steps', steps(it)));
+    caxis([0 1]);colormap(gray);axis equal, axis tight; 
+end
+
+%% Increasing the time step
+% Changing the dt to 0.5 we observe that the values of ublur do not
+% lie within the [0, 1] limit any more. This is due to the conditional
+% stability of the explicit scheme
+img_name = 'testpat_noblur.png';
+[u, ublur] = blurImg(img_name, 10, 0.5);
+figure;
+subplot(1,2,1);imagesc(u);title('Original image');
+caxis([0 1]);colormap(gray);axis equal, axis tight;
+subplot(1,2,2);imagesc(ublur);title('');
+caxis([0 1]);colormap(gray);axis equal, axis tight;
+
+%%
+% Maximum and minimum values of the original image
+max(max(u)), min(min(u))
+
+%%
+% Maximum and minimum values of the original image
+max(max(ublur)), min(min(ublur))
+##### SOURCE END #####
+--></body></html>

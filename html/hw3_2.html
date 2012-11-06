@@ -1,0 +1,211 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Problem 2 and 3</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-06"><meta name="DC.source" content="hw3_2.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Problem 2 and 3</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">A little more Least squares.</a></li><li><a href="#4">Condition Numbers</a></li></ul></div><h2>A little more Least squares.<a name="1"></a></h2><p>For avoiding unnecessary copy and paste I have implemented the function more least squares that performs all the required computations in exercises 2 and 3.</p><pre class="codeinput">clear;close <span class="string">all</span>;
+m = 50; n = 5;
+
+[X, labels, error, kappa_5] = moreLeastSquares(m, n);
+
+format <span class="string">long</span>
+labels
+X
+error
+</pre><pre class="codeoutput">
+labels = 
+
+    'Back Slash'    'Least Squares'    'QR factorization'    'SVD'
+
+
+X =
+
+   0.977651051050956   0.977651051050607   0.977651051050958   0.977651051050960
+   0.787296437030590   0.787296437038082   0.787296437030580   0.787296437030554
+ -13.726690028111138 -13.726690028144622 -13.726690028111090 -13.726690028111035
+  14.993014653596203  14.993014653647393  14.993014653596127  14.993014653596131
+  -3.665759654743957  -3.665759654769070  -3.665759654743924  -3.665759654743953
+
+
+error =
+
+   0.061356756239887   0.061356756239887   0.061356756239888   0.061356756239887
+
+</pre><p>Minimum error obtained with the method</p><pre class="codeinput">me = min(error);
+idx = find(error == me);
+labels{idx}
+</pre><pre class="codeoutput">
+ans =
+
+Back Slash
+
+</pre><p>Maximum error obtained with the method</p><pre class="codeinput">ME = max(error);
+idx = find(error == ME);
+labels{idx}
+</pre><pre class="codeoutput">
+ans =
+
+QR factorization
+
+</pre><h2>Condition Numbers<a name="4"></a></h2><p>Explain the observations</p><pre class="codeinput">m = 50; n = 10;
+[~, ~, ~, kappa_10] = moreLeastSquares(m, n);
+</pre><p>The condition numbers</p><pre class="codeinput">fprintf(<span class="string">'Methods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \n'</span>);
+<span class="keyword">for</span> it = 1:length(kappa_5)
+    <span class="keyword">if</span> it == length(kappa_5)
+        fprintf(<span class="string">'%s \t\t\t | \t\t %f \t\t | \t\t %f\n'</span>, labels{it}, kappa_5(it), kappa_10(it));
+    <span class="keyword">elseif</span> it == 3
+        fprintf(<span class="string">'%s \t | \t\t %f \t\t | \t\t %f\n'</span>, labels{it}, kappa_5(it), kappa_10(it));
+    <span class="keyword">else</span>
+        fprintf(<span class="string">'%s \t\t | \t\t %f \t\t | \t\t %f\n'</span>, labels{it}, kappa_5(it), kappa_10(it));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Methods 		 | 		 5 steps 		 | 		 10 steps 
+Back Slash 		 | 		 642.667357 		 | 		 3558944.505139
+Least Squares 		 | 		 413021.331912 		 | 		 12663833724895.404297
+QR factorization 	 | 		 642.667357 		 | 		 3558944.505139
+SVD 			 | 		 642.667357 		 | 		 3558944.505139
+</pre><p>According to the rule in the homework let K(A) = 10^k, k digits are lost</p><pre class="codeinput">f_digits_lost = @(k)(log10(k));
+dig_lost_5 = f_digits_lost(kappa_5);
+dig_lost_10 = f_digits_lost(kappa_10);
+
+fprintf(<span class="string">'Methods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \n'</span>);
+<span class="keyword">for</span> it = 1:length(kappa_5)
+    <span class="keyword">if</span> it == length(kappa_5)
+        fprintf(<span class="string">'%s \t\t\t | \t\t %f \t\t | \t\t %f\n'</span>, labels{it}, dig_lost_5(it), dig_lost_10(it));
+    <span class="keyword">elseif</span> it == 3
+        fprintf(<span class="string">'%s \t | \t\t %f \t\t | \t\t %f\n'</span>, labels{it}, dig_lost_5(it), dig_lost_10(it));
+    <span class="keyword">else</span>
+        fprintf(<span class="string">'%s \t\t | \t\t %f \t\t | \t\t %f\n'</span>, labels{it}, dig_lost_5(it), dig_lost_10(it));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Methods 		 | 		 5 steps 		 | 		 10 steps 
+Back Slash 		 | 		 2.807986 		 | 		 6.551321
+Least Squares 		 | 		 5.615972 		 | 		 13.102565
+QR factorization 	 | 		 2.807986 		 | 		 6.551321
+SVD 			 | 		 2.807986 		 | 		 6.551321
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Problem 2 and 3
+%% A little more Least squares.
+% For avoiding unnecessary copy and paste I have implemented the function 
+% more least squares that performs all the
+% required computations in exercises 2 and 3.
+clear;close all;
+m = 50; n = 5;
+
+[X, labels, error, kappa_5] = moreLeastSquares(m, n);
+
+format long 
+labels
+X
+error
+
+%%
+% Minimum error obtained with the method
+me = min(error);
+idx = find(error == me);
+labels{idx}
+
+%%
+% Maximum error obtained with the method
+ME = max(error);
+idx = find(error == ME);
+labels{idx}
+
+%% Condition Numbers
+% Explain the observations
+m = 50; n = 10;
+[~, ~, ~, kappa_10] = moreLeastSquares(m, n);
+
+%%
+% The condition numbers
+fprintf('Methods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \n');
+for it = 1:length(kappa_5)
+    if it == length(kappa_5)
+        fprintf('%s \t\t\t | \t\t %f \t\t | \t\t %f\n', labels{it}, kappa_5(it), kappa_10(it));
+    elseif it == 3
+        fprintf('%s \t | \t\t %f \t\t | \t\t %f\n', labels{it}, kappa_5(it), kappa_10(it));
+    else 
+        fprintf('%s \t\t | \t\t %f \t\t | \t\t %f\n', labels{it}, kappa_5(it), kappa_10(it));
+    end
+end
+
+%%
+% According to the rule in the homework let K(A) = 10^k, k digits are lost
+f_digits_lost = @(k)(log10(k));
+dig_lost_5 = f_digits_lost(kappa_5);
+dig_lost_10 = f_digits_lost(kappa_10);
+
+fprintf('Methods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \n');
+for it = 1:length(kappa_5)
+    if it == length(kappa_5)
+        fprintf('%s \t\t\t | \t\t %f \t\t | \t\t %f\n', labels{it}, dig_lost_5(it), dig_lost_10(it));
+    elseif it == 3
+        fprintf('%s \t | \t\t %f \t\t | \t\t %f\n', labels{it}, dig_lost_5(it), dig_lost_10(it));
+    else 
+        fprintf('%s \t\t | \t\t %f \t\t | \t\t %f\n', labels{it}, dig_lost_5(it), dig_lost_10(it));
+    end
+end
+
+##### SOURCE END #####
+--></body></html>

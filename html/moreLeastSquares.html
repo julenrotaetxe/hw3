@@ -1,0 +1,167 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>moreLeastSquares</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-06"><meta name="DC.source" content="moreLeastSquares.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [X, labels, error, kappa] = moreLeastSquares(m, n)
+
+t = linspace(0, 1, m)';
+A = zeros(m,n);
+P = eye(n);
+<span class="keyword">for</span> it = 1:n
+    A(:, it) = polyval(P(n-it+1, :), t);
+<span class="keyword">end</span>
+
+b = cos(4*t);
+
+x_BS = A \ b;
+x_LS = A'*A \ A'*b;
+
+[Q, R] = qr(A, 0); <span class="comment">% Q'*Q = Identity</span>
+R = R(1:size(R, 2), 1:end);
+<span class="comment">% normal equations A*x = b =&gt; Q*R*x = b =&gt; Q'*Q*R*x = Q'*b</span>
+<span class="comment">% R*x = Q'*b</span>
+x_QR = backSub(R, Q'*b);
+
+[U,S,V] = svd(A,0);
+<span class="comment">% A*x = b =&gt; (U*S*V')*x = b =&gt; U'*U*S*V'*x = U'*b =&gt;</span>
+<span class="comment">% V'*x = inv(S)*U'*b =&gt; x = V*inv(S)*U'*b =&gt; x = invS * (U'*b*V)</span>
+invS = diag(1./diag(S));
+x_SVD = V*invS*U'*b;
+
+labels = {<span class="string">'Back Slash'</span>, <span class="string">'Least Squares'</span>, <span class="string">'QR factorization'</span>, <span class="string">'SVD'</span>};
+X = [x_BS, x_LS, x_QR, x_SVD];
+
+col_X = size(X, 2);
+error = zeros(1, col_X);
+<span class="keyword">for</span> it = 1:size(X, 2)
+    error(it) = norm(A*X(:, it) - b, 2);
+<span class="keyword">end</span>
+
+
+kappa = zeros(col_X, 1);
+<span class="comment">% Back-Slash</span>
+kappa(1) = cond(A);
+<span class="comment">% Normal Equations</span>
+kappa(2) = cond(A'*A);
+<span class="comment">% QR</span>
+kappa(3) = cond(R); <span class="comment">% or it should be cond(Q*R)</span>
+<span class="comment">% SVD</span>
+kappa(4) = cond(S); <span class="comment">% or it should be cond(U*S*V')</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Input argument "m" is undefined.
+
+Error in ==&gt; moreLeastSquares at 3
+t = linspace(0, 1, m)';
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+function [X, labels, error, kappa] = moreLeastSquares(m, n)
+
+t = linspace(0, 1, m)';
+A = zeros(m,n);
+P = eye(n);
+for it = 1:n
+    A(:, it) = polyval(P(n-it+1, :), t); 
+end
+
+b = cos(4*t);
+
+x_BS = A \ b;
+x_LS = A'*A \ A'*b;
+
+[Q, R] = qr(A, 0); % Q'*Q = Identity
+R = R(1:size(R, 2), 1:end);
+% normal equations A*x = b => Q*R*x = b => Q'*Q*R*x = Q'*b
+% R*x = Q'*b
+x_QR = backSub(R, Q'*b);
+
+[U,S,V] = svd(A,0);
+% A*x = b => (U*S*V')*x = b => U'*U*S*V'*x = U'*b =>
+% V'*x = inv(S)*U'*b => x = V*inv(S)*U'*b => x = invS * (U'*b*V)
+invS = diag(1./diag(S));
+x_SVD = V*invS*U'*b;
+
+labels = {'Back Slash', 'Least Squares', 'QR factorization', 'SVD'};
+X = [x_BS, x_LS, x_QR, x_SVD];
+
+col_X = size(X, 2);
+error = zeros(1, col_X);
+for it = 1:size(X, 2)
+    error(it) = norm(A*X(:, it) - b, 2);
+end
+
+
+kappa = zeros(col_X, 1);
+% Back-Slash
+kappa(1) = cond(A);
+% Normal Equations
+kappa(2) = cond(A'*A);
+% QR
+kappa(3) = cond(R); % or it should be cond(Q*R)
+% SVD
+kappa(4) = cond(S); % or it should be cond(U*S*V')
+
+end
+##### SOURCE END #####
+--></body></html>

@@ -1,4 +1,4 @@
-function [u, ublur] = blurImg(img_name, dt)
+function [u, ublur] = blurImg(img_name, steps, dt)
 %% Read an image from a file
 u = imread(img_name);
 %u = imread('ellipse_blur2.png');
@@ -11,7 +11,6 @@ if (n ~= n2)
   error('by default, this only supports square images')
 end
 
-
 %% Build a discrete 2D Laplace operator
 e = ones(n,1);
 L1 = spdiags([e  -2*e  e], [-1 0 1], n, n);
@@ -23,7 +22,7 @@ L = kron(L1, I) + kron(I, L1);
 v = reshape(u, n*n, 1);
 
 % Do 10 steps of blurring
-for i=1:10
+for i=1:steps
   v = v + dt*(L*v);
 end
 

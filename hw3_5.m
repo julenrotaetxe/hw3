@@ -9,7 +9,7 @@ x = [3;1;0;-1;-2;0;-2;2];
 %%
 % Displaying the equation of the fitted elipse
 [b, c, d] = ellipse(x, y);
-fprintf('%f*x^2 + %f*x*y + %f*y^2 = 1', b, c, d);
+fprintf('\nEllipse: %f*x^2 + %f*x*y + %f*y^2 = 1\n', b, c, d);
 
 %%
 % I have done two plots the first one using ezplot
@@ -32,7 +32,7 @@ figure;
 plot([x_gen; -x_gen], [y_gen; -y_gen],'LineWidth', 3);
 hold on;
 plot(x, y, 'ro', 'MarkerSize', 5);
-xlabel('x'); ylabel('y');axis([-5 5 -5 5]);
+xlabel('x'); ylabel('y');axis([-6 6 -6 6]);
 
 %% Using manually input points
 load('points.mat');
@@ -40,7 +40,7 @@ load('points.mat');
 %%
 % The fitted ellipse is
 [b, c, d] = ellipse(x, y);
-fprintf('%f*x^2 + %f*x*y + %f*y^2 = 1', b, c, d);
+fprintf('\nEllipse : %f*x^2 + %f*x*y + %f*y^2 = 1\n', b, c, d);
 
 %%
 % Plot of the fitted ellipse
