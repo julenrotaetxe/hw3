@@ -35,10 +35,7 @@ subplot(2,2, 4);imagesc(ublur(idx, idx));title('Blurred image');
 caxis([0 1]);colormap(gray);axis equal, axis tight;
 
 %% Zoom in to check the effect of the time steps
-% The longer the time the more the effect of the method fades away.
-% For the unsharp we observe that increasing the time steps results in
-% that a greater surface is darkened, not only the edges. The resulting
-% blurred image is of the same grey color.
+% The longer the time the more the effect is faded 
 
 steps = [5, 10 , 20];
 
@@ -76,5 +73,5 @@ caxis([0 1]);colormap(gray);axis equal, axis tight;
 max(max(u)), min(min(u))
 
 %%
-% Maximum and minimum values of the original image. Values out of bounds.
+% Maximum and minimum values of the original image
 max(max(ublur)), min(min(ublur))

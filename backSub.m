@@ -1,7 +1,6 @@
+%% Custom function backSub
 function x = backSub(U, b)
-%BACKSUB Summary of this function goes here
-%   Detailed explanation goes here
-
+%BACKSUB 
 n = length(b);
 x = zeros(n, 1);
 for i=n:-1:1

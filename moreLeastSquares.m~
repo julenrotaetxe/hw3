@@ -39,5 +39,10 @@ kappa = zeros(col_X, 1);
 kappa(1) = cond(A);
 % Normal Equations
 kappa(2) = cond(A'*A);
+% QR Factorization. 
+% By the theorem 16.1 ratio norm(x^- x)/norm(x) ~ O(K(A)eps)
+kappa(3) = cond(Q*R);
+% SVD
+kappa(4) = cond(S);
 
 end

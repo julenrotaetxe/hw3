@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Problem 2 and 3</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-06"><meta name="DC.source" content="hw3_2.m"><style type="text/css">
+      --><title>Problem 2 and 3</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-16"><meta name="DC.source" content="hw3_2.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,12 +62,11 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Problem 2 and 3</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">A little more Least squares.</a></li><li><a href="#4">Condition Numbers</a></li></ul></div><h2>A little more Least squares.<a name="1"></a></h2><p>For avoiding unnecessary copy and paste I have implemented the function more least squares that performs all the required computations in exercises 2 and 3.</p><pre class="codeinput">clear;close <span class="string">all</span>;
+  </style></head><body><div class="content"><h1>Problem 2 and 3</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Problem 2: A little more Least squares.</a></li><li><a href="#7">Problem 3: Condition Numbers</a></li></ul></div><h2>Problem 2: A little more Least squares.<a name="1"></a></h2><p>For avoiding unnecessary copy and paste I have implemented the function more least squares that performs all the required computations in exercises 2 and 3. The code of the function is shown at the end of the exercise.</p><pre class="codeinput">clear;close <span class="string">all</span>;clc;
 m = 50; n = 5;
 
 [X, labels, error, kappa_5] = moreLeastSquares(m, n);
-
-format <span class="string">long</span>
+</pre><p>Display the results for Problem 2. The variable "labels" indicate the method followed for computing the results shown below. The variable "X" contains the coefficient of the least square approximation. The variable "error" contains the norm2 error of the residuals, ie Ax - b.</p><pre class="codeinput">format <span class="string">long</span>
 labels
 X
 error
@@ -90,25 +89,31 @@ error =
 
    0.061356756239887   0.061356756239887   0.061356756239888   0.061356756239887
 
-</pre><p>Minimum error obtained with the method</p><pre class="codeinput">me = min(error);
-idx = find(error == me);
+</pre><p>Minimum error, measured as the 2-norm of the residuals, obtained with the method To check which method stands out we check the magnitude of the log of errors.</p><pre class="codeinput">log_error = log(error)
+</pre><pre class="codeoutput">
+log_error =
+
+  -2.791049987729135  -2.791049987729132  -2.791049987729119  -2.791049987729122
+
+</pre><p>The minimum error is obtained with the method:</p><pre class="codeinput">me = min(log_error);
+idx = find(log_error == me);
 labels{idx}
 </pre><pre class="codeoutput">
 ans =
 
 Back Slash
 
-</pre><p>Maximum error obtained with the method</p><pre class="codeinput">ME = max(error);
-idx = find(error == ME);
+</pre><p>The maximum error is obtained with the method:</p><pre class="codeinput">ME = max(log_error);
+idx = find(log_error == ME);
 labels{idx}
 </pre><pre class="codeoutput">
 ans =
 
 QR factorization
 
-</pre><h2>Condition Numbers<a name="4"></a></h2><p>Explain the observations</p><pre class="codeinput">m = 50; n = 10;
+</pre><p>However the differences in the log errors being of the order of 10^-36, we could say that all of them perform similarly when looking at the norm 2 of the residuals.</p><h2>Problem 3: Condition Numbers<a name="7"></a></h2><p>Calculate the condition number of each method for n = 10.</p><pre class="codeinput">m = 50; n = 10;
 [~, ~, ~, kappa_10] = moreLeastSquares(m, n);
-</pre><p>The condition numbers</p><pre class="codeinput">fprintf(<span class="string">'Methods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \n'</span>);
+</pre><p>The condition numbers for the different methods and values of n are contained on the table below.</p><pre class="codeinput">fprintf(<span class="string">'Methods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \n'</span>);
 <span class="keyword">for</span> it = 1:length(kappa_5)
     <span class="keyword">if</span> it == length(kappa_5)
         fprintf(<span class="string">'%s \t\t\t | \t\t %f \t\t | \t\t %f\n'</span>, labels{it}, kappa_5(it), kappa_10(it));
@@ -121,13 +126,13 @@ QR factorization
 </pre><pre class="codeoutput">Methods 		 | 		 5 steps 		 | 		 10 steps 
 Back Slash 		 | 		 642.667357 		 | 		 3558944.505139
 Least Squares 		 | 		 413021.331912 		 | 		 12663833724895.404297
-QR factorization 	 | 		 642.667357 		 | 		 3558944.505139
-SVD 			 | 		 642.667357 		 | 		 3558944.505139
-</pre><p>According to the rule in the homework let K(A) = 10^k, k digits are lost</p><pre class="codeinput">f_digits_lost = @(k)(log10(k));
+QR factorization 	 | 		 642.667357 		 | 		 3558944.505224
+SVD 			 | 		 642.667357 		 | 		 3558944.505087
+</pre><p>According to the rule in the homework let k be the number of digits lost and K(A) the condition number of the problem, they are related by the following formula K(A) = 10^k, thus k = log10(K(A)) The results are summarized in the table below. The worst results are for the case where we use the normal equations. This was expected as the use of the normal equations is an unstable method for doing least squares as K(A'*A) = K(A)^2 and not K(A)</p><pre class="codeinput">f_digits_lost = @(k)(log10(k));
 dig_lost_5 = f_digits_lost(kappa_5);
 dig_lost_10 = f_digits_lost(kappa_10);
 
-fprintf(<span class="string">'Methods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \n'</span>);
+fprintf(<span class="string">'\n\nMethods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \n'</span>);
 <span class="keyword">for</span> it = 1:length(kappa_5)
     <span class="keyword">if</span> it == length(kappa_5)
         fprintf(<span class="string">'%s \t\t\t | \t\t %f \t\t | \t\t %f\n'</span>, labels{it}, dig_lost_5(it), dig_lost_10(it));
@@ -137,7 +142,9 @@ fprintf(<span class="string">'Methods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \
         fprintf(<span class="string">'%s \t\t | \t\t %f \t\t | \t\t %f\n'</span>, labels{it}, dig_lost_5(it), dig_lost_10(it));
     <span class="keyword">end</span>
 <span class="keyword">end</span>
-</pre><pre class="codeoutput">Methods 		 | 		 5 steps 		 | 		 10 steps 
+</pre><pre class="codeoutput">
+
+Methods 		 | 		 5 steps 		 | 		 10 steps 
 Back Slash 		 | 		 2.807986 		 | 		 6.551321
 Least Squares 		 | 		 5.615972 		 | 		 13.102565
 QR factorization 	 | 		 2.807986 		 | 		 6.551321
@@ -146,14 +153,23 @@ SVD 			 | 		 2.807986 		 | 		 6.551321
       Published with MATLAB&reg; 7.12<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Problem 2 and 3
-%% A little more Least squares.
+%% Problem 2: A little more Least squares.
 % For avoiding unnecessary copy and paste I have implemented the function 
 % more least squares that performs all the
-% required computations in exercises 2 and 3.
-clear;close all;
+% required computations in exercises 2 and 3. The code of the function is
+% shown at the end of the exercise.
+clear;close all;clc;
 m = 50; n = 5;
 
 [X, labels, error, kappa_5] = moreLeastSquares(m, n);
+
+%%
+% Display the results for Problem 2. 
+% The variable "labels" indicate the method followed
+% for computing the results shown below. 
+% The variable "X" contains the coefficient of the least square
+% approximation.
+% The variable "error" contains the norm2 error of the residuals, ie Ax - b.
 
 format long 
 labels
@@ -161,24 +177,35 @@ X
 error
 
 %%
-% Minimum error obtained with the method
-me = min(error);
-idx = find(error == me);
+% Minimum error, measured as the 2-norm of the residuals, obtained with the method
+% To check which method stands out we check the magnitude of the log of errors.
+log_error = log(error)
+
+%%
+% The minimum error is obtained with the method:
+me = min(log_error);
+idx = find(log_error == me);
 labels{idx}
 
 %%
-% Maximum error obtained with the method
-ME = max(error);
-idx = find(error == ME);
+% The maximum error is obtained with the method:
+ME = max(log_error);
+idx = find(log_error == ME);
 labels{idx}
 
-%% Condition Numbers
-% Explain the observations
+%%
+% However the differences in the log errors being of the order of 10^-36,
+% we could say that all of them perform similarly when looking at the norm
+% 2 of the residuals.
+
+%% Problem 3: Condition Numbers
+% Calculate the condition number of each method for n = 10.
 m = 50; n = 10;
 [~, ~, ~, kappa_10] = moreLeastSquares(m, n);
 
 %%
-% The condition numbers
+% The condition numbers for the different methods and values of n are
+% contained on the table below.
 fprintf('Methods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \n');
 for it = 1:length(kappa_5)
     if it == length(kappa_5)
@@ -191,12 +218,18 @@ for it = 1:length(kappa_5)
 end
 
 %%
-% According to the rule in the homework let K(A) = 10^k, k digits are lost
+% According to the rule in the homework let k be the number of digits lost and 
+% K(A) the condition number of the problem, they are related by the following formula
+% K(A) = 10^k, thus k = log10(K(A))
+% The results are summarized in the table below. The worst results are for
+% the case where we use the normal equations. This was expected as the use
+% of the normal equations is an unstable method for doing least squares as
+% K(A'*A) = K(A)^2 and not K(A)
 f_digits_lost = @(k)(log10(k));
 dig_lost_5 = f_digits_lost(kappa_5);
 dig_lost_10 = f_digits_lost(kappa_10);
 
-fprintf('Methods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \n');
+fprintf('\n\nMethods \t\t | \t\t 5 steps \t\t | \t\t 10 steps \n');
 for it = 1:length(kappa_5)
     if it == length(kappa_5)
         fprintf('%s \t\t\t | \t\t %f \t\t | \t\t %f\n', labels{it}, dig_lost_5(it), dig_lost_10(it));

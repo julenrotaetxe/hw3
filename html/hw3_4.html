@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>hw3_4</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-06"><meta name="DC.source" content="hw3_4.m"><style type="text/css">
+      --><title>hw3_4</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-16"><meta name="DC.source" content="hw3_4.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -92,7 +92,7 @@ subplot(2,2, 3);imagesc(uedges(idx, idx));title(<span class="string">'Edges'</sp
 caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
 subplot(2,2, 4);imagesc(ublur(idx, idx));title(<span class="string">'Blurred image'</span>);
 caxis([0 1]);colormap(gray);axis <span class="string">equal</span>, axis <span class="string">tight</span>;
-</pre><img vspace="5" hspace="5" src="hw3_4_02.png" alt=""> <h2>Zoom in to check the effect of the time steps<a name="3"></a></h2><pre class="codeinput">steps = [5, 10 , 20];
+</pre><img vspace="5" hspace="5" src="hw3_4_02.png" alt=""> <h2>Zoom in to check the effect of the time steps<a name="3"></a></h2><p>The longer the time the more the effect of the method fades away. For the unsharp we observe that increasing the time steps results in that a greater surface is darkened, not only the edges. The resulting blurred image is of the same grey color.</p><pre class="codeinput">steps = [5, 10 , 20];
 
 figure;
 title(<span class="string">'Effect of different time steps'</span>);
@@ -128,7 +128,7 @@ ans =
 
    0.250980392156863
 
-</pre><p>Maximum and minimum values of the original image</p><pre class="codeinput">max(max(ublur)), min(min(ublur))
+</pre><p>Maximum and minimum values of the original image. Values out of bounds.</p><pre class="codeinput">max(max(ublur)), min(min(ublur))
 </pre><pre class="codeoutput">
 ans =
 
@@ -179,6 +179,10 @@ subplot(2,2, 4);imagesc(ublur(idx, idx));title('Blurred image');
 caxis([0 1]);colormap(gray);axis equal, axis tight;
 
 %% Zoom in to check the effect of the time steps
+% The longer the time the more the effect of the method fades away.
+% For the unsharp we observe that increasing the time steps results in
+% that a greater surface is darkened, not only the edges. The resulting
+% blurred image is of the same grey color.
 
 steps = [5, 10 , 20];
 
@@ -216,7 +220,7 @@ caxis([0 1]);colormap(gray);axis equal, axis tight;
 max(max(u)), min(min(u))
 
 %%
-% Maximum and minimum values of the original image
+% Maximum and minimum values of the original image. Values out of bounds.
 max(max(ublur)), min(min(ublur))
 ##### SOURCE END #####
 --></body></html>

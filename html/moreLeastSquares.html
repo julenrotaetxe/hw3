@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>moreLeastSquares</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-06"><meta name="DC.source" content="moreLeastSquares.m"><style type="text/css">
+      --><title>Custom function moreLeastSquares</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-16"><meta name="DC.source" content="moreLeastSquares.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [X, labels, error, kappa] = moreLeastSquares(m, n)
+  </style></head><body><div class="content"><h1>Custom function moreLeastSquares</h1><pre class="codeinput"><span class="keyword">function</span> [X, labels, error, kappa] = moreLeastSquares(m, n)
 
 t = linspace(0, 1, m)';
 A = zeros(m,n);
@@ -103,19 +103,21 @@ kappa = zeros(col_X, 1);
 kappa(1) = cond(A);
 <span class="comment">% Normal Equations</span>
 kappa(2) = cond(A'*A);
-<span class="comment">% QR</span>
-kappa(3) = cond(R); <span class="comment">% or it should be cond(Q*R)</span>
+<span class="comment">% QR Factorization.</span>
+<span class="comment">% By the theorem 16.1 ratio norm(x^- x)/norm(x) ~ O(K(A)eps)</span>
+kappa(3) = cond(Q*R);
 <span class="comment">% SVD</span>
-kappa(4) = cond(S); <span class="comment">% or it should be cond(U*S*V')</span>
+kappa(4) = cond(U*S*V');
 
 <span class="keyword">end</span>
 </pre><pre class="codeoutput">Input argument "m" is undefined.
 
-Error in ==&gt; moreLeastSquares at 3
+Error in ==&gt; moreLeastSquares at 4
 t = linspace(0, 1, m)';
 </pre><p class="footer"><br>
       Published with MATLAB&reg; 7.12<br></p></div><!--
 ##### SOURCE BEGIN #####
+%% Custom function moreLeastSquares
 function [X, labels, error, kappa] = moreLeastSquares(m, n)
 
 t = linspace(0, 1, m)';
@@ -157,10 +159,11 @@ kappa = zeros(col_X, 1);
 kappa(1) = cond(A);
 % Normal Equations
 kappa(2) = cond(A'*A);
-% QR
-kappa(3) = cond(R); % or it should be cond(Q*R)
+% QR Factorization. 
+% By the theorem 16.1 ratio norm(x^- x)/norm(x) ~ O(K(A)eps)
+kappa(3) = cond(Q*R);
 % SVD
-kappa(4) = cond(S); % or it should be cond(U*S*V')
+kappa(4) = cond(U*S*V');
 
 end
 ##### SOURCE END #####
